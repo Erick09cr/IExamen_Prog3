@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reciclaje</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Reciclaje</h1>
+        <article>
+            <h2>La Importancia del Reciclaje</h2>
+            <p>El reciclaje es un proceso fundamental para la protección del medio ambiente. Ayuda a reducir la cantidad de residuos en los vertederos, disminuye la contaminación del aire y del agua, y conserva los recursos naturales. Además, el reciclaje contribuye a la creación de empleos y al ahorro de energía, ya que fabricar productos a partir de materiales reciclados requiere menos energía que hacerlo a partir de materias primas nuevas.</p>
+            <p>Reciclar es una responsabilidad compartida y cada pequeño esfuerzo cuenta. Al reciclar, estamos tomando pasos importantes hacia un futuro más sostenible y limpio para las próximas generaciones.</p>
+        </article>
+        <form id="recyclingForm">
+            <label for="cedula">Número de Cédula:</label>
+            <input type="text" id="cedula" name="cedula" required>
+            
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            
+            <label for="tipo">Tipo de Reciclaje:</label>
+            <select id="tipo" name="tipo" required>
+                <option value="plastico">Plástico</option>
+                <option value="papel">Papel</option>
+                <option value="vidrio">Vidrio</option>
+                <option value="metal">Metal</option>
+            </select>
+            
+            <label for="cantidad">Cantidad (kg):</label>
+            <input type="number" id="cantidad" name="cantidad" required>
+            
+            <button type="submit">Generar Puntos</button>
+        </form>
+        <div id="resultado"></div>
+        <button id="totalReciclajeBtn">Mostrar Total de Reciclaje</button>
+        <div id="totalReciclaje"></div>
+    </div>
+    <script>
+        let totalReciclaje = 0;
+        let reciclajeData = [];
+
+        document.getElementById('recyclingForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const cedula = document.getElementById('cedula').value;
+            const nombre = document.getElementById('nombre').value;
+            const tipo = document.getElementById('tipo').value;
+            const cantidad = parseFloat(document.getElementById('cantidad').value);
+
+            let puntos = calcularPuntos(tipo, cantidad);
+            totalReciclaje += cantidad;
+
+            reciclajeData.push({
+                cedula: cedula,
+                nombre: nombre,
+                tipo: tipo,
+                cantidad: cantidad,
+                puntos: puntos
+            });
+
+            document.getElementById('resultado').innerHTML = `
+                <p>${nombre}, con cédula ${cedula}, ha reciclado ${cantidad} kg de ${tipo}.</p>
+                <p>Ha ganado ${puntos} puntos, equivalentes a ${puntos * 2} Colones.</p>
+            `;
+
+            document.getElementById('recyclingForm').reset();
+        });
+
+        document.getElementById('totalReciclajeBtn').addEventListener('click', function() {
+            let totalReciclajeHtml = `<p>El total de reciclaje es ${totalReciclaje} kg.</p>`;
+            totalReciclajeHtml += '<ul>';
+            reciclajeData.forEach(entry => {
+                totalReciclajeHtml += `
+                    <li>${entry.nombre} (Cédula: ${entry.cedula}) recicló ${entry.cantidad} kg de ${entry.tipo}. Puntos ganados: ${entry.puntos}</li>
+                `;
+            });
+            totalReciclajeHtml += '</ul>';
+            document.getElementById('totalReciclaje').innerHTML = totalReciclajeHtml;
+        });
+
+        function calcularPuntos(tipo, cantidad) {
+            const puntosPorKg = {
+                plastico: 10,
+                papel: 5,
+                vidrio: 8,
+                metal: 12
+            };
+            return puntosPorKg[tipo] * cantidad;
+        }
+    </script>
+</body>
+</html>
